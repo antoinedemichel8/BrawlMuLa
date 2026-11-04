@@ -3,6 +3,7 @@ package brawlmula;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -266,6 +267,7 @@ public final class PanneauCombat extends JPanel {
 
             // Affichage des plateformes
             for (Plateforme p : carte.getPlateformes().getPlateformes()) {
+<<<<<<< Updated upstream
 
                 // Les plateformes solides sont deja dans le decor
                 if (p.getType() != Plateforme.Type.TRAVERSABLE) {
@@ -278,9 +280,23 @@ public final class PanneauCombat extends JPanel {
                 int w = (int) Math.round(p.getLargeur());
                 int h = (int) Math.round(p.getHauteur());
 
+=======
+                // Le sol SOLIDE est deja visible dans le decor.
+                if (p.getType() != Plateforme.Type.TRAVERSABLE) continue;
+                // Au Marche, la hitbox n'occupe que la surface d'appui.
+                // Le PNG est plus grand et depasse SOUS la ligne de collision.
+                // Le Chateau et les autres cartes gardent leur rendu actuel.
+                Rectangle zone = "MARCHE".equals(carte.getNom())
+                        ? rectangleAffichageMarche(p)
+                        : new Rectangle((int) Math.round(p.getX()),
+                                        (int) Math.round(p.getY()),
+                                        (int) Math.round(p.getLargeur()),
+                                        (int) Math.round(p.getHauteur()));
+>>>>>>> Stashed changes
                 BufferedImage sprite = imagesPlateformes.get(p);
 
                 if (sprite != null) {
+<<<<<<< Updated upstream
 
                     // Affichage du PNG correspondant
                     g.drawImage(sprite, x, y, w, h, null);
@@ -289,6 +305,13 @@ public final class PanneauCombat extends JPanel {
 
                     // Affichage provisoire si aucun PNG
                     dessinerPlateformeProvisoire(g, x, y, w, h);
+=======
+                    g.drawImage(sprite, zone.x, zone.y,
+                            zone.width, zone.height, null);
+                } else {
+                    dessinerPlateformeProvisoire(g, zone.x, zone.y,
+                            zone.width, zone.height);
+>>>>>>> Stashed changes
                 }
             }
 
@@ -302,10 +325,35 @@ public final class PanneauCombat extends JPanel {
         }
     }
 
+<<<<<<< Updated upstream
     // Dessin de secours
     private static void dessinerPlateformeProvisoire(
             Graphics2D g, int x, int y, int w, int h) {
 
+=======
+    /**
+     * Rectangle VISUEL du PNG du Marche, distinct de la hitbox physique.
+     * Le coin y de la hitbox est situe legerement sous le bord du sprite :
+     * les pieds touchent la surface et non le feuillage ou le tissu en-dessous.
+     * Ce calcul ne change ni les PNG ni la physique du Chateau.
+     */
+    static Rectangle rectangleAffichageMarche(Plateforme plateforme) {
+        boolean grande = plateforme.getLargeur() >= 400;
+        int margeX = grande ? 16 : 10;
+        int margeY = grande ? 12 : 9;
+        int hauteurVisuelle = grande ? 115 : 57;
+        return new Rectangle(
+                (int) Math.round(plateforme.getX()) - margeX,
+                (int) Math.round(plateforme.getY()) - margeY,
+                (int) Math.round(plateforme.getLargeur()) + 2 * margeX,
+                hauteurVisuelle);
+    }
+
+    private static void dessinerPlateformeProvisoire(Graphics2D g,
+                                                     int x, int y, int w, int h) {
+        g.setColor(new Color(0, 0, 0, 95));
+        g.fillRoundRect(x + 4, y + 7, w, h, 12, 12);
+>>>>>>> Stashed changes
         g.setColor(new Color(126, 84, 52));
         g.fillRoundRect(x, y, w, h, 10, 10);
 
@@ -338,5 +386,9 @@ public final class PanneauCombat extends JPanel {
         afficherHitboxes = afficher;
         repaint();
     }
+<<<<<<< Updated upstream
 }
 
+=======
+}
+>>>>>>> Stashed changes
